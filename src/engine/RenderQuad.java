@@ -1,0 +1,97 @@
+package engine;
+
+import maths.rect;
+import maths.vec4;
+
+import static org.lwjgl.opengl.GL11.GL_FLOAT;
+import static org.lwjgl.opengl.GL15.GL_ARRAY_BUFFER;
+import static org.lwjgl.opengl.GL15.GL_ELEMENT_ARRAY_BUFFER;
+import static org.lwjgl.opengl.GL15.GL_STATIC_DRAW;
+import static org.lwjgl.opengl.GL11.GL_UNSIGNED_INT;
+import static org.lwjgl.opengl.GL11.GL_TRIANGLES;
+import static org.lwjgl.opengl.GL11.GL_TEXTURE_2D;
+import static org.lwjgl.opengl.GL15.GL_TEXTURE0;
+import static org.lwjgl.opengl.GL15.glActiveTexture;
+import static org.lwjgl.opengl.GL15.glBindTexture;
+import static org.lwjgl.opengl.GL11.glDrawElements;
+import static org.lwjgl.opengl.GL15.glBindBuffer;
+import static org.lwjgl.opengl.GL15.glBufferData;
+import static org.lwjgl.opengl.GL15.glGenBuffers;
+import static org.lwjgl.opengl.GL20.glEnableVertexAttribArray;
+import static org.lwjgl.opengl.GL20.glVertexAttribPointer;
+import static org.lwjgl.opengl.GL30.glBindVertexArray;
+import static org.lwjgl.opengl.GL30.glGenVertexArrays;
+
+public class RenderQuad {
+	public rect rect;
+	public vec4 color;
+	public Texture texture;
+	
+	public int vbo;
+	public int vao;
+	public int ibo;
+	
+	public RenderQuad(float x, float y, float w, float h) {
+		rect 	= new rect(x, y, w, h);
+		color 	= new vec4(1f, 1f, 1f, 1f);
+		texture = new Texture();
+	}
+	
+	public void init() {
+		float texture_index = texture.texture_id[0];
+		float data_array[] = {
+				rect.x		   , rect.y			, color.x, color.y, color.z, color.w, 0.0f, 0.0f, texture_index,
+				rect.x + rect.w, rect.y			, color.x, color.y, color.z, color.w, 1.0f, 0.0f, texture_index,
+				rect.x		   , rect.y + rect.h, color.x, color.y, color.z, color.w, 0.0f, 1.0f, texture_index,
+				rect.x + rect.w, rect.y + rect.h, color.x, color.y, color.z, color.w, 1.0f, 1.0f, texture_index,
+		};
+		
+		int indices_array[] = {
+				0, 1, 2,
+				2, 1, 3,
+		};
+		
+		vao = glGenVertexArrays();
+		glBindVertexArray(vao);
+		
+		vbo = glGenBuffers();
+		glBindBuffer(GL_ARRAY_BUFFER, vbo);
+		glBufferData(GL_ARRAY_BUFFER, data_array, GL_STATIC_DRAW);
+		glEnableVertexAttribArray(0);
+		glVertexAttribPointer(0, 2, GL_FLOAT, false, 4 * 9, 0);
+		glEnableVertexAttribArray(1);
+		glVertexAttribPointer(1, 4, GL_FLOAT, false, 4 * 9, (4*2));
+		glEnableVertexAttribArray(2);
+		glVertexAttribPointer(2, 2, GL_FLOAT, false, 4 * 9, (4*2) + (4*4));
+		glEnableVertexAttribArray(3);
+		glVertexAttribPointer(3, 1, GL_FLOAT, false, 4 * 9, (4*2) + (4*4) + (4*2));
+		
+		ibo = glGenBuffers();
+		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo);
+		glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices_array, GL_STATIC_DRAW);
+		
+		glBindBuffer(GL_ARRAY_BUFFER, 0);
+		glBindVertexArray(0);
+	}
+	
+	public void render() {
+        glBindVertexArray(vao);
+        
+        if(texture.texture_id[0] > 0) {
+        	
+    		glActiveTexture(GL_TEXTURE0);
+            glBindTexture(GL_TEXTURE_2D, texture.texture_id[0]);
+        }
+        
+        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo);
+        glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+
+        if(texture.texture_id[0] > 0) {
+            glBindTexture(GL_TEXTURE_2D, 0);
+        }
+        
+        glBindVertexArray(0);
+	}
+	
+}
