@@ -8,7 +8,9 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
+import maths.lvec2;
 import maths.mat4;
+import maths.vec4;
 
 public class ShaderProgram {
 	public int shader_id;
@@ -85,30 +87,15 @@ public class ShaderProgram {
     	glUseProgram(0);
     	glDeleteProgram(shader_id);
     }
-
+    
 	public void bind() {
         glUseProgram(shader_id);
 	}
-
+	
 	public void unbind() {
         glUseProgram(0);
 	}
-
-	public void set_uniform(String uniform_name, mat4 matrix) {
-        int location = get_uniform_location(uniform_name);
-        if(location >= 0) {
-        	glUniformMatrix4fv(location, false, matrix.data);
-        }
-    }
 	
-	public void set_uniform(String uniform_name, int value) {
-        int location = get_uniform_location(uniform_name);
-        if(location >= 0) {
-        	glUniform1i(location, value);
-        }
-    }
-
-
 	private int get_uniform_location(String uniform_name) {
 		int location = -1;
 		
@@ -122,6 +109,41 @@ public class ShaderProgram {
 		}
 		
         return(location);
+	}
+	
+	public void set_uniform(String uniform_name, mat4 matrix) {
+        int location = get_uniform_location(uniform_name);
+        if(location >= 0) {
+        	glUniformMatrix4fv(location, false, matrix.data);
+        }
+    }
+	
+	public void set_uniform(String uniform_name, int value) {
+        int location = get_uniform_location(uniform_name);
+        if(location >= 0) {
+        	glUniform1i(location, value);
+        }
+    }
+	
+	public void set_uniform(String uniform_name, lvec2 mouse_pos) {
+        int location = get_uniform_location(uniform_name);
+        if(location >= 0) {
+        	glUniform2f(location, (float) mouse_pos.x, (float) mouse_pos.y);
+        }
+	}
+
+	public void set_uniform(String uniform_name, vec4 value) {
+        int location = get_uniform_location(uniform_name);
+        if(location >= 0) {
+        	glUniform4f(location, value.x, value.y, value.z, value.w);
+        }
+	}
+
+	public void set_uniform(String uniform_name, float value) {
+        int location = get_uniform_location(uniform_name);
+        if(location >= 0) {
+        	glUniform1f(location, value);
+        }
 	}
     
 }

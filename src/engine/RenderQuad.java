@@ -74,14 +74,16 @@ public class RenderQuad {
 		glBindVertexArray(0);
 	}
 	
-	public void render() {
+	public void render(ShaderProgram shader) {
         glBindVertexArray(vao);
         
         if(texture.texture_id[0] > 0) {
-        	
+    		shader.set_uniform("u_bitmap", 0);
     		glActiveTexture(GL_TEXTURE0);
             glBindTexture(GL_TEXTURE_2D, texture.texture_id[0]);
         }
+
+		shader.set_uniform("u_animate_uv", 0f);
         
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo);
         glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
