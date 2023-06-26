@@ -21,8 +21,9 @@ public class GameScene {
 		
 	}
 	
-	public void update_scene() {
+	public void update_scene(float delta_time) {
 		// sound.play();
+		anim_quad.update(delta_time);
 	}
 	
 	public void render_scene(Window window, Input input) {

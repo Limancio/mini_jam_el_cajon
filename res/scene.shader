@@ -43,8 +43,8 @@ void main() {
   	} else {
   		if(u_animate_uv == 1) {
   			vec2 fixed_uv = v_uv;
-  			fixed_uv.x = v_uv.x * u_uv_offset.z;
-  			fixed_uv.y = v_uv.y * u_uv_offset.w;
+  			fixed_uv.x = (u_uv_offset.x * u_uv_offset.z) + v_uv.x * u_uv_offset.z;
+  			fixed_uv.y = (u_uv_offset.y * u_uv_offset.w) + v_uv.y * u_uv_offset.w;
   			
 	    	frag_color = texture(u_bitmap, fixed_uv); 
   		} else {

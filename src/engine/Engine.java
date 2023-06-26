@@ -43,7 +43,7 @@ public class Engine implements Runnable {
     	game_scene.anim_quad = new RenderQuadAnim(-200, -100, 200.0f, 200.0f);
     	game_scene.anim_quad.texture.load_texture_file("res/fire1_64.png");
     	game_scene.anim_quad.init();
-    	game_scene.anim_quad.init_animation(64,64);
+    	game_scene.anim_quad.init_animation(64, 64, 40);
     	
     	game_scene.projection_matrix = new mat4();
     	game_scene.projection_matrix.ortho(window.width, window.height, -1f, 1f);
@@ -57,8 +57,8 @@ public class Engine implements Runnable {
     
     @Override
     public void run() {
-        float elapsed_time   = 0f;
         float global_time    = 0f;
+        float elapsed_time   = 0f;
         float interval_timer = 0f;
         float interval 		 = 1f / TARGET_UPS;
         
@@ -68,8 +68,6 @@ public class Engine implements Runnable {
         	global_time    += elapsed_time;
         	interval_timer += elapsed_time;
         	
-        	System.out.println(elapsed_time + " - " + global_time);
-        	
             window.clear();
         	if(window.window_should_close()) {
         		running = false;
@@ -77,21 +75,23 @@ public class Engine implements Runnable {
         	
         	game_scene.handle_input();
             while (interval_timer >= interval) {
-            	game_scene.update_scene();
+            	game_scene.update_scene(elapsed_time);
                 interval_timer -= interval;
             }
             
             game_scene.render_scene(window, input);
             window.update();
 
-            float loopSlot = 1f / TARGET_FPS;
-            double endTime = timer.getLastLoopTime() + loopSlot;
-            while (timer.getTime() < endTime) {
-                try {
-					Thread.sleep(1);
-				} catch (InterruptedException e) {
-					e.printStackTrace();
-				}
+            if(window.vsync) {
+                float loopSlot = 1f / TARGET_FPS;
+                double endTime = timer.getLastLoopTime() + loopSlot;
+                while (timer.getTime() < endTime) {
+                    try {
+    					Thread.sleep(1);
+    				} catch (InterruptedException e) {
+    					e.printStackTrace();
+    				}
+                }
             }
         }
     }
