@@ -1,7 +1,6 @@
 package engine;
 
 import game.GameScene;
-import maths.mat4;
 
 public class Engine implements Runnable {
 
