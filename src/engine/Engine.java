@@ -1,11 +1,14 @@
 package engine;
 
+import java.util.Random;
+
 import game.GameScene;
+
 
 public class Engine implements Runnable {
 
     public static final int TARGET_FPS = 60;
-    public static final int TARGET_UPS = 30;
+    public static final int TARGET_UPS = 60;
 
     public Thread loop_thread;
     public Timer  timer;
@@ -14,6 +17,7 @@ public class Engine implements Runnable {
 	public Audio  audio;
     
     // @NOTE(Liman1): Game
+	public static Random random;
     public GameScene game_scene;
     
     public Engine(String title, int width, int height, boolean vsync) {
@@ -22,6 +26,7 @@ public class Engine implements Runnable {
         timer		= new Timer();
         input		= new Input();
         audio		= new Audio();
+        random 		= new Random(12345);
         
         game_scene  = new GameScene();
 	}
@@ -57,11 +62,13 @@ public class Engine implements Runnable {
         	}
         	
         	game_scene.handle_input(window, elapsed_time);
+        	game_scene.update_scene(window, elapsed_time);
+        	/*
             while (interval_timer >= interval) {
-            	game_scene.update_scene(elapsed_time);
+            	game_scene.update_scene(window, elapsed_time);
                 interval_timer -= interval;
             }
-            
+            */
             game_scene.render_scene(window, input);
             window.update();
 

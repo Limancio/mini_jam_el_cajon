@@ -1,16 +1,18 @@
 package game;
 
+import java.util.Random;
+
 import engine.Input;
 import engine.RenderQuad;
-import engine.RenderQuadAnim;
 import engine.ShaderProgram;
 import engine.Sound;
 import engine.Window;
 import maths.mat4;
+import maths.vec3;
 
 public class GameScene {
-	public Player player;
-	public AnimObject fire;
+	public Camera camera; 
+	public Level level;
 	
 	public ShaderProgram shader;
 	public mat4 projection_matrix;
@@ -18,43 +20,55 @@ public class GameScene {
 	public Sound sound;
 	
 	public void init(Window window) {
-		player = new Player();
-		player.quad = new RenderQuad(0, 0, 100.0f, 200.0f);
-    	// quad.texture.load_texture_file("res/mytm.png");
-		player.quad.init();
-
-		fire = new AnimObject();
-		fire.quad = new RenderQuadAnim(-200, -100, 200.0f, 200.0f);
-		fire.quad.texture.load_texture_file("res/fire1_64.png");
-    	fire.quad.init();
-    	fire.quad.init_animation(64, 64, 40);
-    	
     	projection_matrix = new mat4();
     	projection_matrix.ortho(window.width, window.height, -1f, 1f);
     	
+		camera = new Camera();
+		
+		/*
+			fire = new AnimObject();
+			fire.quad = new RenderQuadAnim(-200, -100, 200.0f, 200.0f);
+			fire.quad.texture.load_texture_file("res/fire1_64.png");
+	    	fire.quad.init();
+	    	fire.quad.init_animation(64, 64, 40);
+    	*/
+
     	shader = new ShaderProgram();
     	shader.load_shader_file("res/scene.shader");
     	
     	sound = new Sound();
     	sound.load_sound_from_file("res/theme2.ogg", false);
+
+    	level = new Level();
+    	level.init();
+    	
+    	level.load_level_1();
 	}
 	
 	public void handle_input(Window window, float delta_time) {
-		player.input(window, delta_time);
+		level.input(window, delta_time);
 	}
 	
-	public void update_scene(float delta_time) {
+	public void update_scene(Window window, float delta_time) {
 		// sound.play();
-		fire.quad.update(delta_time);
+		// fire.quad.update(delta_time);
+		
+		level.update(window, delta_time);
+		camera.update(level.player.position);
 	}
 	
 	public void render_scene(Window window, Input input) {
 		shader.bind();
+		
+		mat4 view_matrix = camera.get_view_matrix(window);
+		shader.set_uniform("u_view_matrix", view_matrix);
+		
 		shader.set_uniform("u_proj_matrix", projection_matrix);
 		shader.set_uniform("u_mouse_pos", input.mouse_pos);
 
-		player.render(shader);
-		fire.render(shader);
+		level.render(shader);
+		
+		// fire.render(shader);
 		
 		shader.unbind();
 	}

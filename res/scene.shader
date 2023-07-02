@@ -11,10 +11,11 @@ out float v_texture_id;
 out vec3 v_frag_pos;
 
 uniform mat4 u_proj_matrix;
+uniform mat4 u_view_matrix;
 uniform mat4 u_model_matrix;
 
 void main() {	
-	gl_Position  = u_proj_matrix * u_model_matrix * vec4(position.x, position.y, 0.0, 1.0);
+	gl_Position  = u_proj_matrix * u_model_matrix * u_view_matrix * vec4(position.x, position.y, 0.0, 1.0);
 	v_color      = color;
 	v_uv         = uv;
 	v_texture_id = texture_id;
@@ -49,6 +50,7 @@ void main() {
   			
 	    	frag_color = texture(u_bitmap, fixed_uv); 
   		} else {
+  			/*
 	    	frag_color = texture(u_bitmap, v_uv); 
 			
 		  	vec3 light_pos = vec3(u_mouse_pos.x, u_mouse_pos.y, 10.0);
@@ -63,6 +65,9 @@ void main() {
 		    vec3 diffuse = diff * light_color;
 		
 			frag_color = vec4(ambient + diffuse, 1.0) * frag_color;
+			*/
+			
+	    	frag_color = texture(u_bitmap, v_uv); 
   		}
   	}
   	

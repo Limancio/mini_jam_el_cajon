@@ -8,4 +8,9 @@ public class vec3 {
 		this.y = y;
 		this.z = z;
 	}
+	
+	public static vec3 add(vec3 a, vec3 b) {
+		return(new vec3(a.x + b.x, a.y + b.y, a.z + b.z));
+	}
+	
 }
