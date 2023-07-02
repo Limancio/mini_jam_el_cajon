@@ -25,7 +25,7 @@ import maths.vec4;
 public class RenderQuad {
 	public rect rect;
 	public vec4 color;
-	public Texture texture;
+	public Texture texture_array[];
 	
 	public int vbo;
 	public int vao;
@@ -34,11 +34,10 @@ public class RenderQuad {
 	public RenderQuad(float x, float y, float w, float h) {
 		rect 	= new rect(x, y, w, h);
 		color 	= new vec4(1f, 1f, 1f, 1f);
-		texture = new Texture();
 	}
 	
 	public void init() {
-		float texture_index = texture.texture_id[0];
+		float texture_index = (texture_array != null) ? 1 : 0;
 		float data_array[] = {
 				rect.x		   , rect.y			, color.x, color.y, color.z, color.w, 0.0f, 0.0f, texture_index,
 				rect.x + rect.w, rect.y			, color.x, color.y, color.z, color.w, 1.0f, 0.0f, texture_index,
@@ -77,10 +76,10 @@ public class RenderQuad {
 	public void render(ShaderProgram shader) {
         glBindVertexArray(vao);
         
-        if(texture.texture_id[0] > 0) {
+        if(texture_array[0].texture_id[0] > 0) {
     		shader.set_uniform("u_bitmap", 0);
     		glActiveTexture(GL_TEXTURE0);
-            glBindTexture(GL_TEXTURE_2D, texture.texture_id[0]);
+            glBindTexture(GL_TEXTURE_2D, texture_array[0].texture_id[0]);
         }
 
 		shader.set_uniform("u_animate_uv", 0f);
@@ -89,7 +88,7 @@ public class RenderQuad {
         glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 
-        if(texture.texture_id[0] > 0) {
+        if(texture_array[0].texture_id[0] > 0) {
             glBindTexture(GL_TEXTURE_2D, 0);
         }
         

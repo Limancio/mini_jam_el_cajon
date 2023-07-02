@@ -1,7 +1,7 @@
 package engine;
 
 public class CollisionBox {
-	float x0, y0, x1, y1;
+	public float x0, y0, x1, y1;
 
 	public CollisionBox(float x0, float y0, float x1, float y1) {
 		this.x0 = x0;

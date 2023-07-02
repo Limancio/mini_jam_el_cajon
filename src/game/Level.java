@@ -5,6 +5,7 @@ import static org.lwjgl.glfw.GLFW.*;
 import engine.Engine;
 import engine.RenderQuad;
 import engine.ShaderProgram;
+import engine.Texture;
 import engine.Window;
 import maths.vec3;
 
@@ -58,12 +59,18 @@ public class Level {
 		wall_displacement_array = new RenderQuad[3];
 		for(int i = 0; i < 3; i++) {
 			wall_displacement_array[i] = new RenderQuad(0, 0, 128.0f, 128.0f);
-			wall_displacement_array[i].texture.load_texture_file("res/block_" + (i + 1) + ".png");
+			
+			wall_displacement_array[i].texture_array    = new Texture[1];
+			wall_displacement_array[i].texture_array[0] = new Texture();
+			wall_displacement_array[i].texture_array[0].load_texture_file("res/block_" + (i + 1) + ".png");
 			wall_displacement_array[i].init();
 		}
 		
 		wall_background = new RenderQuad(0, 0, 128.0f, 128.0f);
-		wall_background.texture.load_texture_file("res/block_bg.png");
+		
+		wall_background.texture_array    = new Texture[1];
+		wall_background.texture_array[0] = new Texture();
+		wall_background.texture_array[0].load_texture_file("res/block_bg.png");
 		wall_background.init();
 		
 	}
