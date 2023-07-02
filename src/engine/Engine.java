@@ -36,23 +36,7 @@ public class Engine implements Runnable {
     	input.init(window);
     	audio.init();
     	
-    	game_scene.quad = new RenderQuad( 200, -100, 200.0f, 200.0f);
-    	game_scene.quad.texture.load_texture_file("res/mytm.png");
-    	game_scene.quad.init();
-
-    	game_scene.anim_quad = new RenderQuadAnim(-200, -100, 200.0f, 200.0f);
-    	game_scene.anim_quad.texture.load_texture_file("res/fire1_64.png");
-    	game_scene.anim_quad.init();
-    	game_scene.anim_quad.init_animation(64, 64, 40);
-    	
-    	game_scene.projection_matrix = new mat4();
-    	game_scene.projection_matrix.ortho(window.width, window.height, -1f, 1f);
-    	
-    	game_scene.shader = new ShaderProgram();
-    	game_scene.shader.load_shader_file("res/scene.shader");
-    	
-    	game_scene.sound = new Sound();
-    	game_scene.sound.load_sound_from_file("res/theme2.ogg", false);
+    	game_scene.init(window);
     }
     
     @Override
@@ -73,7 +57,7 @@ public class Engine implements Runnable {
         		running = false;
         	}
         	
-        	game_scene.handle_input();
+        	game_scene.handle_input(window);
             while (interval_timer >= interval) {
             	game_scene.update_scene(elapsed_time);
                 interval_timer -= interval;

@@ -6,13 +6,14 @@ public class mat4 {
 	public mat4() {
 		data = new float[16];
 	}
-
-	public void 
-	imat() {
-		data[0]  = 1f;
-		data[5]  = 1f;
-	    data[10] = 1f;
-	    data[15] = 1f;
+	
+	public mat4(float value) {
+		data = new float[16];
+		
+		data[0]  = value;
+		data[5]  = value;
+	    data[10] = value;
+	    data[15] = value;
 	}
 	
 	public void 
@@ -39,4 +40,35 @@ public class mat4 {
 	    data[14] = -frange * zn; 
 	    data[15] = 1.0f;
 	}
+
+	public void
+	multiply(mat4 b) {
+	    mat4 c = new mat4();
+	    
+	    for(int row = 0; row < 4; row++) {
+	        for(int col = 0; col < 4; col++) {
+	            float sum = 0.0f;
+	            for(int e = 0; e < 4; e++) {
+	                sum += this.data[e + row * 4] * b.data[col + e * 4];
+	            }
+	            c.data[col + row * 4] = sum;
+	        }
+	    }
+	    
+	    for(int i = 0; i < 16; i++) {
+	    	this.data[i] = c.data[i];
+	    }
+	}
+	
+	public static mat4
+	translate_matrix(vec3 position) {
+	    mat4 matrix = new mat4(1.0f);
+
+	    matrix.data[12] = position.x;
+	    matrix.data[13] = position.y;
+	    matrix.data[14] = position.z;
+	    
+	    return(matrix);
+	}
+
 }

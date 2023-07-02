@@ -1,13 +1,13 @@
 package engine;
 
-import java.nio.IntBuffer;
-
 import org.lwjgl.openal.AL;
 import org.lwjgl.openal.ALC;
 import org.lwjgl.openal.ALC10;
 import org.lwjgl.openal.ALCCapabilities;
 import org.lwjgl.openal.ALCapabilities;
 import org.lwjgl.system.MemoryUtil;
+
+import java.nio.IntBuffer;
 
 public class Audio {
 	public long context;
