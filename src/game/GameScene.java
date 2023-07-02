@@ -43,9 +43,10 @@ public class GameScene {
 		player.input(window, delta_time);
 	}
 	
-	public void update_scene(float delta_time) {
+	public void update_scene(Window window, float delta_time) {
 		// sound.play();
 		fire.quad.update(delta_time);
+		player.Character_Fall(window ,delta_time);
 	}
 	
 	public void render_scene(Window window, Input input) {

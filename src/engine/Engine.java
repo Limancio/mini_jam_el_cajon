@@ -58,7 +58,7 @@ public class Engine implements Runnable {
         	
         	game_scene.handle_input(window, elapsed_time);
             while (interval_timer >= interval) {
-            	game_scene.update_scene(elapsed_time);
+            	game_scene.update_scene(window,elapsed_time);
                 interval_timer -= interval;
             }
             
