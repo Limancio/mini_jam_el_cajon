@@ -8,17 +8,25 @@ import engine.Window;
 import maths.mat4;
 import maths.vec3;
 
-public class Player {
-	public vec3 position;
+public class Player extends Entity {
 	public RenderQuad quad;
 	
 	public Player() {
 		position = new vec3(0, 0, 0);
 	}
 	
-	public void input(Window window) {
+	public void input(Window window, float delta_time) {
 		if(window.is_key_press(GLFW_KEY_A)) {
-			position.x -= 1;
+			position.x -= 150.0 * delta_time;
+		}
+		if(window.is_key_press(GLFW_KEY_D)) {
+			position.x += 150.0 * delta_time;
+		}
+		if(window.is_key_press(GLFW_KEY_W)) {
+			position.y += 150.0 * delta_time;
+		}
+		if(window.is_key_press(GLFW_KEY_S)) {
+			position.y -= 150.0 * delta_time;
 		}
 	}
 	

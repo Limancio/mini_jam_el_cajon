@@ -11,9 +11,10 @@ out float v_texture_id;
 out vec3 v_frag_pos;
 
 uniform mat4 u_proj_matrix;
+uniform mat4 u_model_matrix;
 
 void main() {	
-	gl_Position  = u_proj_matrix * vec4(position.x, position.y, 0.0, 1.0);
+	gl_Position  = u_proj_matrix * u_model_matrix * vec4(position.x, position.y, 0.0, 1.0);
 	v_color      = color;
 	v_uv         = uv;
 	v_texture_id = texture_id;
