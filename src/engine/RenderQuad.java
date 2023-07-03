@@ -30,6 +30,16 @@ public class RenderQuad {
 	public int vbo;
 	public int vao;
 	public int ibo;
+
+	public RenderQuad(float w, float h, String path) {
+		rect 	= new rect(0, 0, w, h);
+		color 	= new vec4(1f, 1f, 1f, 1f);
+		
+		texture_array = new Texture[1];
+		texture_array[0] = new Texture();
+		texture_array[0].load_texture_file(path);
+		init();
+	}
 	
 	public RenderQuad(float x, float y, float w, float h) {
 		rect 	= new rect(x, y, w, h);

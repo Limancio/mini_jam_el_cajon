@@ -25,12 +25,16 @@ public class RenderQuadAnim extends RenderQuad {
 	public float target_fps;
 	public float elapsed_time;
 	public boolean is_sprite_sheet;
+
+	public RenderQuadAnim(float w, float h) {
+		super(0, 0, w, h);
+	}
 	
 	public RenderQuadAnim(float x, float y, float w, float h) {
 		super(x, y, w, h);
 	}
 	
-	public void init_animation(int texture_width, int texture_height, int frame_width, int frame_height, int target_fps, int frame_count) {
+	public void init_animation(int texture_width, int texture_height, int frame_width, int frame_height, int frame_count, int target_fps) {
 		this.sprite_size    = new vec2(frame_width, frame_height);
 		this.sprite_count   = new vec2(texture_width / frame_width, texture_height / frame_height);
 		this.sprite_uv_size = new vec2(1f / this.sprite_count.x, 1f / this.sprite_count.y);
@@ -64,6 +68,7 @@ public class RenderQuadAnim extends RenderQuad {
 			
 			if(texture.texture_id[0] > 0) {
 				shader.set_uniform("u_bitmap", 0);
+				
 				glActiveTexture(GL_TEXTURE0);
 				glBindTexture(GL_TEXTURE_2D, texture.texture_id[0]);
 			}

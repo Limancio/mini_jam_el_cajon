@@ -47,6 +47,18 @@ public class Sound {
 		alSourcei(source_id, AL_POSITION, 0);
 		alSourcef(source_id, AL_GAIN, 0.3f);
 	}
+
+	public void force_play() {
+		int state = alGetSourcei(source_id, AL_SOURCE_STATE);
+		
+		if(state == AL_STOPPED) {
+			is_playing = false;
+			alSourcei(source_id, AL_POSITION, 0);
+		}
+
+		alSourcePlay(source_id);
+		is_playing = true;
+	}
 	
 	public void play() {
 		int state = alGetSourcei(source_id, AL_SOURCE_STATE);

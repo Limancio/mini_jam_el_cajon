@@ -9,5 +9,9 @@ public class rect {
 		this.w = w;
 		this.h = h;
 	}
-	
+
+	public boolean contains_point(float x, float y) {
+	    return((x >= this.x) && (x <= this.x + this.w) && (y >= this.y) && (y <= this.y + this.h));
+	}
+
 }

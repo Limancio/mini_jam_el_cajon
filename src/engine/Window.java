@@ -15,8 +15,19 @@ public class Window {
 	public long window_handle;
 	public boolean resized;
 	public boolean vsync;
-	
+
+	public boolean typed_keys[];
+	public boolean press_keys[];
+	public boolean up_keys   [];
+	public boolean last_keys [];
+	public final int MAX_KEYS = 1024;
+    
 	public Window(String title, int width, int height, boolean vsync) {
+		typed_keys = new boolean[MAX_KEYS];
+		press_keys = new boolean[MAX_KEYS];
+		up_keys	   = new boolean[MAX_KEYS];
+		last_keys  = new boolean[MAX_KEYS];
+		
         this.title = title;
         this.width = width;
         this.height = height;
@@ -86,14 +97,30 @@ public class Window {
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);  
     }
 
-	public void
-	set_clear_color(float r, float g, float b, float a) {
+	public void set_clear_color(float r, float g, float b, float a) {
         glClearColor(r, g, b, a);
     }
 	
     public void update() {
         glfwSwapBuffers(window_handle);
         glfwPollEvents();
+        
+        for(int key = 0; key < MAX_KEYS; key++) {
+            if(!last_keys[key] && press_keys[key]) {
+                typed_keys[key] = true;
+            } else {
+                typed_keys[key] = false;
+            }
+            if(last_keys[key] && !press_keys[key]) {
+                up_keys[key] = true;
+            } else {
+                up_keys[key] = false;
+            }
+        }
+
+        for(int key = 0; key < MAX_KEYS; key++) {
+        	last_keys[key] = press_keys[key];
+        }
     }
     
     public boolean is_key_press(int keyCode) {

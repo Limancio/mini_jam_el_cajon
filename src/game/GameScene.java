@@ -1,14 +1,10 @@
 package game;
 
-import java.util.Random;
-
 import engine.Input;
-import engine.RenderQuad;
 import engine.ShaderProgram;
 import engine.Sound;
 import engine.Window;
 import maths.mat4;
-import maths.vec3;
 
 public class GameScene {
 	public Camera camera; 
@@ -45,16 +41,18 @@ public class GameScene {
     	level.load_level_1();
 	}
 	
-	public void handle_input(Window window, float delta_time) {
-		level.input(window, delta_time);
+	public void handle_input(Window window, Input input, float delta_time) {
+		level.input(window, input, delta_time);
 	}
 	
 	public void update_scene(Window window, float delta_time) {
-		// sound.play();
-		// fire.quad.update(delta_time);
+		if(window.resized) {
+			window.resized = false;
+	    	projection_matrix.ortho(window.width, window.height, -1f, 1f);
+		}
 		
 		level.update(window, delta_time);
-		camera.update(level.player.position);
+		camera.update(level.player);
 	}
 	
 	public void render_scene(Window window, Input input) {
@@ -66,9 +64,7 @@ public class GameScene {
 		shader.set_uniform("u_proj_matrix", projection_matrix);
 		shader.set_uniform("u_mouse_pos", input.mouse_pos);
 
-		level.render(shader);
-		
-		// fire.render(shader);
+		level.render(window, shader);
 		
 		shader.unbind();
 	}

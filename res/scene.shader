@@ -19,7 +19,7 @@ void main() {
 	v_color      = color;
 	v_uv         = uv;
 	v_texture_id = texture_id;
-    v_frag_pos = vec3(position, 0.0);
+    v_frag_pos = vec3((u_model_matrix * vec4(position.x, position.y, 0.0, 1.0)).xyz);
 }
 
 #frag
@@ -54,7 +54,7 @@ void main() {
 	    	frag_color = texture(u_bitmap, v_uv); 
 			
 		  	vec3 light_pos = vec3(u_mouse_pos.x, u_mouse_pos.y, 10.0);
-			vec3 light_color = vec3(1.0);
+			vec3 light_color = vec3(5.0);
 		    float ambient_strength = 0.1;
 		    
 		    vec3 ambient = ambient_strength * light_color;

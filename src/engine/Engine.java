@@ -33,7 +33,7 @@ public class Engine implements Runnable {
     
     public void init() {
     	window.init();
-    	window.set_clear_color(0.75f, 0.5f, 0f, 1f);
+    	window.set_clear_color(0, 0, 0, 1f);
     	
     	timer.init();
     	
@@ -45,8 +45,9 @@ public class Engine implements Runnable {
     
     @Override
     public void run() {
-        float global_time    = 0f;
         float elapsed_time   = 0f;
+        
+        float global_time    = 0f;
         float interval_timer = 0f;
         float interval 		 = 1f / TARGET_UPS;
         
@@ -61,15 +62,11 @@ public class Engine implements Runnable {
         		running = false;
         	}
         	
-        	game_scene.handle_input(window, elapsed_time);
+        	game_scene.handle_input(window, input, elapsed_time);
         	game_scene.update_scene(window, elapsed_time);
         	/*
             while (interval_timer >= interval) {
-<<<<<<< HEAD
             	game_scene.update_scene(window, elapsed_time);
-=======
-            	game_scene.update_scene(window,elapsed_time);
->>>>>>> 3d0c7b455561bc3a58305aa3cc24b3a90893ebe5
                 interval_timer -= interval;
             }
             */
