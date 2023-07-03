@@ -30,10 +30,13 @@ public class RenderQuad {
 	public int vbo;
 	public int vao;
 	public int ibo;
+	
+	public float uv_scale = 1.0f;
 
-	public RenderQuad(float w, float h, String path) {
+	public RenderQuad(float w, float h, float uv_scale, String path) {
 		rect 	= new rect(0, 0, w, h);
 		color 	= new vec4(1f, 1f, 1f, 1f);
+		this.uv_scale = uv_scale;
 		
 		texture_array = new Texture[1];
 		texture_array[0] = new Texture();
@@ -48,11 +51,11 @@ public class RenderQuad {
 	
 	public void init() {
 		float texture_index = (texture_array != null) ? 1 : 0;
-		float data_array[] = {
+		float data_array[]  = {
 				rect.x		   , rect.y			, color.x, color.y, color.z, color.w, 0.0f, 0.0f, texture_index,
-				rect.x + rect.w, rect.y			, color.x, color.y, color.z, color.w, 1.0f, 0.0f, texture_index,
-				rect.x		   , rect.y + rect.h, color.x, color.y, color.z, color.w, 0.0f, 1.0f, texture_index,
-				rect.x + rect.w, rect.y + rect.h, color.x, color.y, color.z, color.w, 1.0f, 1.0f, texture_index,
+				rect.x + rect.w, rect.y			, color.x, color.y, color.z, color.w, 1.0f * uv_scale, 0.0f, texture_index,
+				rect.x		   , rect.y + rect.h, color.x, color.y, color.z, color.w, 0.0f, 1.0f * uv_scale, texture_index,
+				rect.x + rect.w, rect.y + rect.h, color.x, color.y, color.z, color.w, 1.0f * uv_scale, 1.0f * uv_scale, texture_index,
 		};
 		
 		int indices_array[] = {

@@ -26,9 +26,17 @@ public class Player extends Entity {
 	public Texture falling_left_array[];
 	public Texture falling_right_array[];
 
+	public Texture alas_facing_left_array[];
+	public Texture alas_facing_right_array[];
+	public Texture alas_walking_left_array[];
+	public Texture alas_walking_right_array[];
+	public Texture alas_falling_left_array[];
+	public Texture alas_falling_right_array[];
+
 	public Sound step_brick_sound_array[];
 	public Sound step_water_sound_array[];
 	public float play_step_timer = 0;
+	public float play_dog_timer = 0;
 	
 	public List<ItemType> item_bag;
 	public boolean imagine_active;
@@ -43,9 +51,11 @@ public class Player extends Entity {
 	
 	public float player_speed = 500.0f;
 	public float facing_direction = 1.0f;
+	public List<ItemType> crayon_bag;
 	
 	public Player() {
 		item_bag = new ArrayList<ItemType>();
+		crayon_bag = new ArrayList<ItemType>();
 		position = new vec3(0, 0, 0);
 		
 		box 	 = new vec2(112.0f, 204.0f);
@@ -62,40 +72,72 @@ public class Player extends Entity {
 			motion.x -= player_speed * delta_time;
 			
 			facing_direction = -1;
-			quad.texture_array = walking_left_array;
 		} 
 		if(window.is_key_press(GLFW_KEY_D)) {
 			motion.x += player_speed * delta_time;
 			
 			facing_direction   = 1;
-			quad.texture_array = walking_right_array;
 		} 
 		
-		if(flying) {
-			motion.y += player_speed * delta_time;
+		boolean contains_alas = false;
+		
+		for(ItemType it : item_bag) {
+			if(it.equals(ItemType.alas_type)) {
+				contains_alas = true;
+			}
 		}
 		
-		if(on_ground) {
-			if(motion.x == 0) {
-				quad.frame_count   = 16;
-				quad.target_fps    = 10;
-				quad.texture_array = (facing_direction == -1) ? facing_left_array : facing_right_array;
+		if(contains_alas) {
+			if(on_ground) {
+				if(motion.x == 0) {
+					quad.frame_count   = 16;
+					quad.target_fps    = 10;
+					quad.texture_array = (facing_direction == -1) ? alas_facing_left_array : alas_facing_right_array;
+				} else {
+					quad.frame_count   = 8;
+					if(quad.current_frame >= quad.frame_count) {
+						quad.current_frame = 0;
+					}
+					
+					quad.target_fps    = 14;
+					quad.texture_array = (facing_direction == -1) ? alas_walking_left_array : alas_walking_right_array;
+				}
 			} else {
-				quad.frame_count   = 8;
+				quad.frame_count = 3;
 				if(quad.current_frame >= quad.frame_count) {
 					quad.current_frame = 0;
 				}
-				
-				quad.target_fps    = 14;
-				quad.texture_array = (facing_direction == -1) ? walking_left_array : walking_right_array;
+
+				quad.texture_array = (facing_direction == -1) ? alas_falling_left_array : alas_falling_right_array;
 			}
 		} else {
-			quad.frame_count = 3;
-			if(quad.current_frame >= quad.frame_count) {
-				quad.current_frame = 0;
-			}
+			flying = false;
+			if(on_ground) {
+				if(motion.x == 0) {
+					quad.frame_count   = 16;
+					quad.target_fps    = 10;
+					quad.texture_array = (facing_direction == -1) ? facing_left_array : facing_right_array;
+				} else {
+					quad.frame_count   = 8;
+					if(quad.current_frame >= quad.frame_count) {
+						quad.current_frame = 0;
+					}
+					
+					quad.target_fps    = 14;
+					quad.texture_array = (facing_direction == -1) ? walking_left_array : walking_right_array;
+				}
+			} else {
+				quad.frame_count = 3;
+				if(quad.current_frame >= quad.frame_count) {
+					quad.current_frame = 0;
+				}
 
-			quad.texture_array = (facing_direction == -1) ? falling_left_array : falling_right_array;
+				quad.texture_array = (facing_direction == -1) ? falling_left_array : falling_right_array;
+			}
+		}
+
+		if(flying) {
+			motion.y += player_speed * delta_time;
 		}
 		
 		/*
@@ -127,7 +169,7 @@ public class Player extends Entity {
 	}
 	
 	public CollisionBox get_box() {
-		vec2 player_center   = new vec2(position.x + (quad.rect.w * 0.5f) - (box.x * 0.5f), position.y);
+		vec2 player_center = new vec2(position.x + (quad.rect.w * 0.5f) - (box.x * 0.5f), position.y);
 		CollisionBox player_box = new CollisionBox(player_center.x, player_center.y, player_center.x + box.x, player_center.y + box.y);
 		
 		return(player_box);
@@ -135,42 +177,93 @@ public class Player extends Entity {
 	
 	public void update(Window window, Level level, float delta_time) {
 		quad.update(delta_time);
-		
+		on_ground = false;
 		Character_Fall(window, delta_time);
 		
-		vec3 target_position = vec3.add(position, motion);
-		vec2 player_center   = new vec2(target_position.x + (quad.rect.w * 0.5f) - (box.x * 0.5f), target_position.y);
-		CollisionBox player_box = new CollisionBox(player_center.x, player_center.y, player_center.x + box.x, player_center.y + box.y);
-		CollisionBox player_ground_box = new CollisionBox(player_center.x, player_center.y - quad.rect.h * 0.01f, 
-														  player_center.x + box.x, player_center.y + box.y * 0.1f);
+		{
+			vec3 temp_motion = new vec3(motion.x, 0, 0);
+			vec3 target_position = vec3.add(position, temp_motion);
+			vec2 player_center   = new vec2(target_position.x + (quad.rect.w * 0.5f) - (box.x * 0.5f), target_position.y);
+			CollisionBox player_box = new CollisionBox(player_center.x, player_center.y, player_center.x + box.x, player_center.y + box.y);
 
-		on_ground = false;
-		for(StaticObject it : level.blocks) {
-			if(it != null) {
-				if(it.block_type == Level.WL || it.block_type == Level.WT) {
+			for(StaticObject it : level.blocks) {
+				if(it != null) {
 					CollisionBox block_box = new CollisionBox(it.position.x, it.position.y, 
 							it.position.x + it.quad.rect.w, it.position.y + it.quad.rect.h);
 					
-					if(player_ground_box.do_overlap(block_box)) {
-						on_ground = true;
-						if(motion.x != 0 && play_step_timer <= 0) {
+					if(it.block_type == Level.WL || it.block_type == Level.WT || it.block_type == Level.GR) {
+						if(player_box.do_overlap(block_box)) {
+							motion.x = 0;
+						}
+					} else if(it.block_type == Level.LD) {
+						if(player_box.do_overlap(block_box)) {
+							motion.y = 0;
+							if(window.is_key_press(GLFW_KEY_W)) {
+								motion.y += player_speed * delta_time;
+							} 
+							if(window.is_key_press(GLFW_KEY_S)) {
+								motion.y -= player_speed * delta_time;
+							} 
+						}
+					} else if(it.block_type == Level.SC) {
+						if(player_box.do_overlap(block_box)) {
 
-							play_step_timer = 0.35f;
-							switch(it.block_type) {
-								case Level.WL: {
-									step_brick_sound_array[Engine.random.nextInt(step_brick_sound_array.length)].force_play(); 
-								} break;
-								case Level.WT: {
-									step_water_sound_array[Engine.random.nextInt(step_water_sound_array.length)].force_play(); 
-								} break;
+							boolean contains_alas = false;
+							boolean contains_monster = false;
+							
+							for(ItemType item : item_bag) {
+								if(item.equals(ItemType.alas_type)) {
+									contains_alas = true;
+								} else if(item.equals(ItemType.monster_type)) {
+									contains_monster = true;
+								}
+							}
+							if(!contains_alas || !contains_monster) {
+								motion.x = 0;
+								if(play_dog_timer <= 0) {
+									play_dog_timer = 0.25f;
+									level.dog_sound_array[Engine.random.nextInt(level.dog_sound_array.length)].play(); 
+								}
 							}
 						}
 					}
+				}
+			}
+		}
+		
+		{
+			vec3 temp_motion = new vec3(0, motion.y, 0);
+			vec3 target_position = vec3.add(position, temp_motion);
+			vec2 player_center   = new vec2(target_position.x + (quad.rect.w * 0.5f) - (box.x * 0.5f), target_position.y);
+			CollisionBox player_box = new CollisionBox(player_center.x, player_center.y, player_center.x + box.x, player_center.y + box.y);
+
+			for(StaticObject it : level.blocks) {
+				if(it != null) {
+					CollisionBox block_box = new CollisionBox(it.position.x, it.position.y, 
+							it.position.x + it.quad.rect.w, it.position.y + it.quad.rect.h);
 					
-					
-					if(player_box.do_overlap(block_box)) {
-						if(player_box.x0 < block_box.x1) {
-							motion.x = 0;
+					if(it.block_type == Level.WL || it.block_type == Level.WT || it.block_type == Level.GR) {
+						if(player_box.do_overlap(block_box)) {
+							motion.y = 0;
+							on_ground = true;
+
+							if(motion.x != 0 && play_step_timer <= 0) {
+								play_step_timer = 0.35f;
+								switch(it.block_type) {
+									case Level.GR: 
+									case Level.WL: {
+										step_brick_sound_array[Engine.random.nextInt(step_brick_sound_array.length)].force_play(); 
+									} break;
+									case Level.WT: {
+										step_water_sound_array[Engine.random.nextInt(step_water_sound_array.length)].force_play(); 
+									} break;
+								}
+							}
+						}
+					} else if(it.block_type == Level.WW) {
+						if(player_box.do_overlap(block_box)) {
+							item_bag.clear();
+							flying = false;
 						}
 					}
 				}
@@ -179,9 +272,19 @@ public class Player extends Entity {
 		
 		position = vec3.add(position, motion);
 
-		if(play_step_timer > 0) {
-			play_step_timer -= delta_time;
+		if(level.current_level == 1) {
+			if(position.y < -256.0f) {
+				level.load_level_1();
+			}
 		}
+		if(level.current_level == 3) {
+			if(position.y < -1024.0f) {
+				level.load_level_3();
+			}
+		}
+		
+		if(play_step_timer > 0) play_step_timer -= delta_time;
+		if(play_dog_timer  > 0) play_dog_timer -= delta_time;
 	}
 	
 	public void render(ShaderProgram shader) {
@@ -194,6 +297,36 @@ public class Player extends Entity {
 
 	public void init() {
 		quad = new RenderQuadAnim(256.0f, 256.0f);
+
+		alas_facing_left_array  = new Texture[16];
+		alas_facing_right_array = new Texture[16];
+		for(int i = 0; i < 16; i++) {
+			alas_facing_left_array[i] = new Texture();
+			alas_facing_left_array[i].load_texture_file("res/alas_idle_left/idle-izq-" + (i + 1) + ".png");
+
+			alas_facing_right_array[i] = new Texture();
+			alas_facing_right_array[i].load_texture_file("res/alas_idle_right/idle-der-" + (i + 1) + ".png");
+		}
+		
+		alas_walking_left_array  = new Texture[8];
+		alas_walking_right_array = new Texture[8];
+		for(int i = 0; i < 8; i++) {
+			alas_walking_left_array[i] = new Texture();
+			alas_walking_left_array[i].load_texture_file("res/alas_walk_left/move-izq-" + (i + 1) + ".png");
+
+			alas_walking_right_array[i] = new Texture();
+			alas_walking_right_array[i].load_texture_file("res/alas_walk_right/move-der-" + (i + 1) + ".png");
+		}
+
+		alas_falling_left_array  = new Texture[3];
+		alas_falling_right_array = new Texture[3];
+		for(int i = 0; i < 3; i++) {
+			alas_falling_left_array[i] = new Texture();
+			alas_falling_left_array[i].load_texture_file("res/alas_fall/fall-izq-" + (i + 1) + ".png");
+
+			alas_falling_right_array[i] = new Texture();
+			alas_falling_right_array[i].load_texture_file("res/alas_fall/fall-der-" + (i + 1) + ".png");
+		}
 		
 		facing_left_array  = new Texture[16];
 		facing_right_array = new Texture[16];
@@ -224,7 +357,6 @@ public class Player extends Entity {
 			falling_right_array[i] = new Texture();
 			falling_right_array[i].load_texture_file("res/fall/fall-der-" + (i + 1) + ".png");
 		}
-		
 		quad.texture_array = facing_left_array;
 		
 		quad.init();

@@ -4,10 +4,20 @@ import engine.RenderQuadAnim;
 import engine.ShaderProgram;
 import engine.Texture;
 import maths.mat4;
+import maths.vec3;
 
 public class AnimObject extends Entity {
 	public RenderQuadAnim quad;
 
+	public AnimObject(float w, float h) {
+		quad = new RenderQuadAnim(w, h);
+	}
+	
+	public AnimObject(vec3 position, RenderQuadAnim quad) {
+		this.position = position;
+		this.quad = quad;
+	}
+	
 	public AnimObject(float w, float h, String path) {
 		quad = new RenderQuadAnim(w, h);
 		

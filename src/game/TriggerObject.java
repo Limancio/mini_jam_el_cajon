@@ -16,13 +16,18 @@ public class TriggerObject extends Entity {
 		trigger_water,
 		trigger_carton,
 		trigger_level,
+		trigger_alas,
+		
+		trigger_crayon_1,
+		trigger_crayon_2,
+		trigger_crayon_3,
 	}
 	
 	public TriggerObject(TriggerType type, vec3 position, float width, float height, String path) {
 		this.type = type;
 		this.position = position;
 		
-		quad = new RenderQuad(width, height, path);
+		quad = new RenderQuad(width, height, 1.0f, path);
 		box  = new CollisionBox(position.x, position.y, position.x + width * 1.0f, position.y + height * 1.0f);
 	}
 

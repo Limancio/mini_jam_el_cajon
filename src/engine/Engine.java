@@ -52,6 +52,7 @@ public class Engine implements Runnable {
         float interval 		 = 1f / TARGET_UPS;
         
         boolean running = true;
+    	timer.init();
         while (running) {
         	elapsed_time = timer.getElapsedTime();
         	global_time    += elapsed_time;
