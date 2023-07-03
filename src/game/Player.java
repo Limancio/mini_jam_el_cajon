@@ -23,6 +23,8 @@ public class Player extends Entity {
 	public Texture facing_right_array[];
 	public Texture walking_left_array[];
 	public Texture walking_right_array[];
+	public Texture falling_left_array[];
+	public Texture falling_right_array[];
 
 	public Sound step_brick_sound_array[];
 	public Sound step_water_sound_array[];
@@ -30,7 +32,8 @@ public class Player extends Entity {
 	
 	public List<ItemType> item_bag;
 	public boolean imagine_active;
-	
+
+	public boolean flying = false;
 	public boolean on_ground = true;
 	public float time 		 = 0;
 	public int JumpsLeft	 = 1;
@@ -51,6 +54,10 @@ public class Player extends Entity {
 	public void input(Window window, float delta_time) {
 		motion = new vec3(0, 0, 0);
 		
+		if(!item_bag.isEmpty() && item_bag.get(0).equals(ItemType.alas_type)) {
+			flying = window.is_key_press(GLFW_KEY_SPACE);
+		}
+		
 		if(window.is_key_press(GLFW_KEY_A)) {
 			motion.x -= player_speed * delta_time;
 			
@@ -63,20 +70,32 @@ public class Player extends Entity {
 			facing_direction   = 1;
 			quad.texture_array = walking_right_array;
 		} 
-
-		imagine_active = window.is_key_press(GLFW_KEY_SPACE);
 		
-		if(motion.x == 0) {
-			quad.frame_count   = 16;
-			quad.target_fps    = 10;
-			quad.texture_array = (facing_direction == -1) ? facing_left_array : facing_right_array;
+		if(flying) {
+			motion.y += player_speed * delta_time;
+		}
+		
+		if(on_ground) {
+			if(motion.x == 0) {
+				quad.frame_count   = 16;
+				quad.target_fps    = 10;
+				quad.texture_array = (facing_direction == -1) ? facing_left_array : facing_right_array;
+			} else {
+				quad.frame_count   = 8;
+				if(quad.current_frame >= quad.frame_count) {
+					quad.current_frame = 0;
+				}
+				
+				quad.target_fps    = 14;
+				quad.texture_array = (facing_direction == -1) ? walking_left_array : walking_right_array;
+			}
 		} else {
-			quad.frame_count   = 8;
+			quad.frame_count = 3;
 			if(quad.current_frame >= quad.frame_count) {
 				quad.current_frame = 0;
 			}
-			quad.target_fps    = 14;
-			quad.texture_array = (facing_direction == -1) ? walking_left_array : walking_right_array;
+
+			quad.texture_array = (facing_direction == -1) ? falling_left_array : falling_right_array;
 		}
 		
 		/*
@@ -101,8 +120,8 @@ public class Player extends Entity {
 
 	public void Character_Fall(Window window, float delta_time) {
 		if(time <= 0) {
-			if(on_ground == false) {
-				motion.y -= 400 * delta_time;
+			if(on_ground == false && flying == false) {
+				motion.y -= 600 * delta_time;
 			}
 		}
 	}
@@ -194,6 +213,16 @@ public class Player extends Entity {
 
 			walking_right_array[i] = new Texture();
 			walking_right_array[i].load_texture_file("res/walk_right/move-der-" + (i + 1) + ".png");
+		}
+
+		falling_left_array  = new Texture[3];
+		falling_right_array = new Texture[3];
+		for(int i = 0; i < 3; i++) {
+			falling_left_array[i] = new Texture();
+			falling_left_array[i].load_texture_file("res/fall/fall-izq-" + (i + 1) + ".png");
+
+			falling_right_array[i] = new Texture();
+			falling_right_array[i].load_texture_file("res/fall/fall-der-" + (i + 1) + ".png");
 		}
 		
 		quad.texture_array = facing_left_array;

@@ -22,7 +22,8 @@ public class Level {
 	
 	public StaticObject blocks[];
 	public List<TriggerObject> object_list;
-	
+
+	public RenderQuad bridge_array[];
 	public RenderQuad wall_displacement_array[];
 	public RenderQuad wall_background;
 	public RenderQuad quad_undefined;
@@ -34,6 +35,7 @@ public class Level {
 	public enum ItemType {
 		llave_type,
 		carton_type,
+		alas_type,
 	}
 	
 	public static final int EX = -2;
@@ -127,6 +129,7 @@ public class Level {
 		
 		object_list.add(new TriggerObject(TriggerType.trigger_carton,  get_position_from_index(1.5f, 3.25f), 64.0f, 64.0f, "res/carton.png"));
 		object_list.add(new TriggerObject(TriggerType.trigger_carton,  get_position_from_index(6.5f, 3.25f), 64.0f, 64.0f, "res/carton.png"));
+		object_list.add(new TriggerObject(TriggerType.trigger_carton,  get_position_from_index(12.5f, 8.25f), 64.0f, 64.0f, "res/carton.png"));
 		object_list.add(new TriggerObject(TriggerType.trigger_level,  get_position_from_index(12, 3), 128.0f, 128.0f, "res/mytm.png"));
 		// object_list.add(new TriggerObject(TriggerType.trigger_water, get_position_from_index(10f, 2.65f), 460.0f, 60.0f, "res/fea_mancha_de_agua.png"));
 		// object_list.add(new TriggerObject(TriggerType.trigger_water, get_position_from_index(12f, 2.65f), 460.0f, 60.0f, "res/fea_mancha_de_agua.png"));
@@ -148,32 +151,57 @@ public class Level {
 				WL, BG, BG, BG, BG, BG, BG, BG, BG, BG, BG, BG, BG, BG, WL, 
 				WL, BG, BG, BG, BG, BG, BG, BG, BG, BG, BG, BG, BG, BG, WL, 
 				WL, BG, PL, BG, BG, BG, BG, BG, BG, BG, BG, BG, EX, BG, WL, 
-				WL, WL, WL, WL, WL, WL, BG, BG, WL, WL, WL, WL, WL, WL, WL, 
-				WL, WL, WL, WL, WL, WL, BG, BG, WL, WL, WL, WL, WL, WL, WL, 
-				WL, WL, WL, WL, WL, WL, BG, BG, WL, WL, WL, WL, WL, WL, WL, 
+				WL, WL, WL, WL, WL, WL, BG, BG, BG, WL, WL, WL, WL, WL, WL, 
+				WL, WL, WL, WL, WL, WL, BG, BG, BG, WL, WL, WL, WL, WL, WL, 
+				WL, WL, WL, WL, WL, WL, BG, BG, BG, WL, WL, WL, WL, WL, WL, 
 			//  0   1   2   3   4   5   6   7   8   9   10  11  12  13  14  
 		};
-		
-		// object_list.add(new TriggerObject(TriggerType.trigger_carton,  get_position_from_index(1.5f, 3.25f), 64.0f, 64.0f, "res/carton.png"));
+
+		object_list.add(new TriggerObject(TriggerType.trigger_carton,  get_position_from_index(1.5f, 3.25f), 64.0f, 64.0f, "res/carton.png"));
+		object_list.add(new TriggerObject(TriggerType.trigger_carton,  get_position_from_index(1.5f, 3.75f), 64.0f, 64.0f, "res/carton.png"));
+		// object_list.add(new TriggerObject(TriggerType.trigger_level,  get_position_from_index(6.0f, 2.50f), 128.0f, 128.0f, "res/puente_0.png"));
+		// object_list.add(new TriggerObject(TriggerType.trigger_level,  get_position_from_index(7.0f, 2.50f), 128.0f, 128.0f, "res/puente_1.png"));
+		// object_list.add(new TriggerObject(TriggerType.trigger_level,  get_position_from_index(8.0f, 2.50f), 128.0f, 128.0f, "res/puente_2.png"));
 		// object_list.add(new TriggerObject(TriggerType.trigger_water, get_position_from_index(10f, 2.65f), 460.0f, 60.0f, "res/fea_mancha_de_agua.png"));
 
-		player.item_bag.add(ItemType.llave_type);
+		// player.item_bag.add(ItemType.llave_type);
 		this.current_level = 2;
 		load_layout(map_layout, 15, 10);
 	}
 
 	public void input(Window window, Input input, float delta_time) {
+		/*
+		if(window.is_key_typed(GLFW_KEY_1) && !player.item_bag.isEmpty()) {
+			ItemType new_type = player.item_bag.get(0).equals(ItemType.carton_type) ? ItemType.llave_type : ItemType.carton_type;
+			player.item_bag.set(0, new_type);
+		}
+		*/
+
+		if(window.is_key_typed(GLFW_KEY_1) && !player.item_bag.isEmpty()) {
+			for(int i = 0; i < player.item_bag.size(); i++) {
+				ItemType it = player.item_bag.get(i);
+				
+				if(it.equals(ItemType.carton_type)) {
+					player.item_bag.set(i, ItemType.llave_type);
+				}
+			}
+		}
+
+		if(window.is_key_typed(GLFW_KEY_2) && !player.item_bag.isEmpty() 
+				&& player.item_bag.get(0).equals(ItemType.carton_type)
+				&& player.item_bag.get(1).equals(ItemType.carton_type)) {
+			player.item_bag.clear();
+			
+			player.item_bag.add(ItemType.alas_type);
+		}
+		
 		switch(current_level) {
 			case 1: {
-				if(window.is_key_press(GLFW_KEY_R)) load_level_1();
-			
-				if(window.is_key_typed(GLFW_KEY_1) && !player.item_bag.isEmpty()) {
-					ItemType new_type = player.item_bag.get(0).equals(ItemType.carton_type) ? ItemType.llave_type : ItemType.carton_type;
-					player.item_bag.set(0, new_type);
-				}
+				if(window.is_key_typed(GLFW_KEY_R)) load_level_1();
+
 			} break;
 			case 2: {
-				if(window.is_key_press(GLFW_KEY_R)) load_level_2();
+				if(window.is_key_typed(GLFW_KEY_R)) load_level_2();
 			} break;
 		}
 		
@@ -220,10 +248,12 @@ public class Level {
 			case llave_type:
 				icon = llave_sprite;
 				break;
-			
+			case alas_type:
+				icon = llave_sprite;
+				break;
 			}
 			
-			vec3 position 	  = new vec3((slot * (icon.rect.w * 0.45f)) + window.width * -0.5f, window.height * -0.5f, 0);
+			vec3 position 	  = new vec3((slot * (icon.rect.w * 1.0f)) + window.width * -0.5f, window.height * -0.5f, 0);
 			mat4 model_matrix = new mat4(1.0f);
 			
 			model_matrix.multiply(mat4.translate_matrix(position));
@@ -264,8 +294,11 @@ public class Level {
 	public void handle_level_end() {
 		switch(current_level) {
 			case 1: {
-				if(!player.item_bag.isEmpty() && player.item_bag.get(0).equals(ItemType.llave_type)) {
-					load_level_2();
+				for(int i = 0; i < player.item_bag.size(); i++) {
+					ItemType it = player.item_bag.get(i);
+					if(it.equals(ItemType.llave_type)) {
+						load_level_2();
+					}
 				}
 			} break;
 			case 2: {
