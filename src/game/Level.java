@@ -13,7 +13,6 @@ import engine.ShaderProgram;
 import engine.Window;
 import game.TriggerObject.TriggerType;
 import maths.mat4;
-import maths.rect;
 import maths.vec3;
 
 public class Level {
@@ -168,7 +167,7 @@ public class Level {
 			case 1: {
 				if(window.is_key_press(GLFW_KEY_R)) load_level_1();
 			
-				if(window.typed_keys[GLFW_KEY_1] && !player.item_bag.isEmpty()) {
+				if(window.is_key_typed(GLFW_KEY_1) && !player.item_bag.isEmpty()) {
 					ItemType new_type = player.item_bag.get(0).equals(ItemType.carton_type) ? ItemType.llave_type : ItemType.carton_type;
 					player.item_bag.set(0, new_type);
 				}

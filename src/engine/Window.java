@@ -69,6 +69,7 @@ public class Window {
 
         // Setup a key callback. It will be called every time a key is pressed, repeated or released.
         glfwSetKeyCallback(window_handle, (window, key, scancode, action, mods) -> {
+        	press_keys[key] = glfwGetKey(window_handle, key) == GLFW_PRESS;
             if (key == GLFW_KEY_ESCAPE && action == GLFW_RELEASE) {
                 glfwSetWindowShouldClose(window, true); // We will detect this in the rendering loop
             }
@@ -123,8 +124,12 @@ public class Window {
         }
     }
     
-    public boolean is_key_press(int keyCode) {
-        return glfwGetKey(window_handle, keyCode) == GLFW_PRESS;
+    public boolean is_key_press(int key_code) {
+        return(press_keys[key_code]);
+    }
+
+    public boolean is_key_typed(int key_code) {
+        return(typed_keys[key_code]);
     }
 
     public boolean window_should_close() {
