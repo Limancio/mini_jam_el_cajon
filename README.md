@@ -10,8 +10,7 @@ El objetivo del juego es llegar al final obteniendo los 3 crayones.
 
 Controles:
 
-WASD - moverse  | 
-R    - reiniciar nivel
+WASD - moverse | Espacio saltar | R    - reiniciar nivel
 
 1 + (uno de cartón) -> llave
 
